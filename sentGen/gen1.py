@@ -1,6 +1,7 @@
 from math import log
 from random import choice
 from string import ascii_lowercase
+import numpy
 
 wordfile = open ('../data/shakespeare.txt', 'r')
 words = ["START"]
@@ -24,21 +25,30 @@ for line in wordfile:
 
 words.append ("END")
 
-print words
-
 count = dict ()
 
 for i in range (len (words) - 1):
     if words [i] in count:
-	count [words [i]].append (words [i + 1])
+	count [words [i]].append ((words [i + 1], 1))
     else:
-	count [words [i]] = [words[i + 1]]
+	count [words [i]] = [(words[i + 1], 1)]
 
 
-while (True):
-    cur_word = raw_input ("Please enter a starting word: ")
+def normalize (word):
+    for word in count:
+	weight_sum = 0.0
+	for p in count[word]:
+	    weight_sum += p [1]
+	
+
+def get_sentence (word):
+    cur_word = word
+    ret = ""
 
     while (cur_word != "END"):
-	print cur_word,
+	ret = ret + " " + cur_word
 	next_word = choice (count [cur_word])
 	cur_word = next_word
+
+    return ret
+
