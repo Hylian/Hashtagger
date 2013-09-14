@@ -13,7 +13,7 @@ for row in reader:
     print row[3]
     tweet = row[3]
     tweettag = []
-    if tweet[:2] == "RT":
+    if tweet[:2] == "RT" or tweet[:2] == "rt":
         tweet = tweet[2:]
     tweet = tweet.split()
     new_tweet = []
