@@ -3,7 +3,7 @@
 import sys
 import tweepy
 import cPickle as pickle
-import Regex
+import string
 
 consumer_key = raw_input('Consumer Key:')
 consumer_secret = raw_input('Consumer Secret:')
@@ -33,9 +33,9 @@ class CustomStreamListener(tweepy.StreamListener):
                     #print tweet
                 elif word[0] == '#':
                     #tweet.remove(word)
-                    tweettag.append(word)
+                    tweettag.append("#" + ''.join(ch for ch in word[1:] if ch not in string.punctuation).lower())
                 else:
-                    new_tweet.append(word)
+                    new_tweet.append(''.join(ch for ch in word if ch not in string.punctuation).lower())
             #new_tweet = ' '.join(new_tweet)
             #print new_tweet
             if(len(tweettag) > 0):
