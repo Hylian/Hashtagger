@@ -216,12 +216,12 @@ def generate (cur_hash):
     return result
 
 def generate_multiple (cur_hash, num):
-    result = ""
+    result = []
     if (num <= 0):
 	return "That is not a valid number"
 
     for i in range (num):
-	result += generate (cur_hash) + "\n"#.encode("ascii")
+	result.append (generate (cur_hash))
 
     return result
 
