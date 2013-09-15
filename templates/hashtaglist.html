@@ -12,14 +12,18 @@
 -->
 </div>
 <p></p>
-<form action="/hashtag/2" method=post>
+<form action="/hashtag/2" method=post class = "form">
     <div class = "ui input">
-	<input type=text name=text placeholder="Tweet" autocomplete="off" value = #{{sentence}}>
+	<input type=text name=text placeholder="Tweet" autocomplete="off" value = "{{sentence}}">
     </div>
     <button class="massive ui twitter button">
 	Go again!
     </button>
-    {{hashtag_text}}
 </form>
 {% endblock %}
 
+{% block p %}
+<p>
+    {{hashtag_text | safe}}
+<p>
+{% endblock %}

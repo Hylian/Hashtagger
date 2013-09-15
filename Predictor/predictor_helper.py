@@ -7,7 +7,7 @@ examples = []
 
 cur_example = 0
 num_train = 100000
-num_test = 10
+num_test = 100
 score = 0.0
 
 #utilities
@@ -113,7 +113,7 @@ def run_tests (predictor_func):
     while (cur_example < num_train + num_test):
 	ex = examples [cur_example]
 	test (ex [0], predictor_func)
-	#print ex [1]
+	print ' '.join (ex[0]), ex [1]
 	#if (cur_example % 100 == 0):
 	    #print "Average score so far (" + str(cur_example) + " examples):",
 	    #print score / cur_example 

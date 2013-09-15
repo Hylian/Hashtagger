@@ -80,15 +80,16 @@ def normalize (d):
 
 def get_text (result):
     ret = ""
+    ret2 = ""
     best = result [0]
     worst = result [1]
-    ret += "MOST RELEVANT HASHTAGS"
+    ret += "MOST RELEVANT HASHTAGS:<br>"
     for x in best:
-	ret += str (x [0]) + " " + str (x [1])
-    ret += "\nLEAST RELEVANT HASHTAGS"
+	ret += "#" + x [1] + "<br> "
+    ret += "LEAST RELEVANT HASHTAGS:<br>"
     for x in reversed (worst):
-	ret += str (x [0]) + " " + str (x [1])
-
+	ret += "#" + x [1] + "<br> "
+    return ret#(ret [:-2], ret2[:-2])
 
 def predictor_func (example):
     for unigram in example:

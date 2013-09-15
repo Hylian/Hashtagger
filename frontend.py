@@ -21,10 +21,12 @@ def hashtag(button):
 	else:
 	    assert (button == "2")
 	    text = request.form ['text']
-	    print text
+	    #print text
+	    #print text.split ()
 	    result = test (text.split(), predictor_func)
-	    htag_text = get_text (result)
-	    print htag_text
+	    #print result
+	    htag_text = get_text (result).decode ("ascii")
+	    #print htag_text
 	    return render_template('hashtaglist.html', sentence=text, hashtag_text = htag_text)
 
     else:
