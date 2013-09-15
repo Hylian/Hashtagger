@@ -5,7 +5,7 @@ import numpy
 import pickle
 
 NUM_FILES = 5
-MAX_LINES_SHAKESPEARE = 50000
+MAX_LINES_SHAKESPEARE = 10000
 
 hdict = dict ()
 count = dict ()
@@ -26,6 +26,8 @@ def is_url (word):
 def read_shakespeare ():
     numlines = 0
     wordfile = open ('../data/shakespeare.txt', 'r')
+
+    global words
 
     words = ["START"]
     for line in wordfile:
@@ -165,7 +167,7 @@ def get_sentence (word, hashtag):
     return ret
 
 def get_all_data ():
-    global words
+    global words, count, hdict
     words = []
 
     for i in range (NUM_FILES):
@@ -188,12 +190,17 @@ def get_all_data ():
 
 
 def load_data ():
+    global count
+    global hdict
     count = pickle.load (open ('count.pickle', 'rb'))	
     hdict = pickle.load (open ('hdict.pickle', 'rb'))
     print len (hdict)
     print len (count)
 
 def generate (cur_hash):
+    global hdict
+    print len (hdict)
+
     if (cur_hash not in hdict):
 	return cur_hash + " is not a valid hashtag"
 
@@ -201,3 +208,5 @@ def generate (cur_hash):
 
     result = get_sentence (cur_word, cur_hash) + " " + cur_hash
     return result
+
+load_data ()
