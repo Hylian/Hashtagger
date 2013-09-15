@@ -12,7 +12,7 @@ def main_page():
 def hashtag():
     if request.method=='POST':
         hashtag = request.form['hashtag']
-        return render_template('hashtag.html', sentence= generate (hashtag))
+        return render_template('hashtag.html', sentence= generate (hashtag), cleanhashtag = hashtag[1:])
     else:
         return 'You messed up'
 
