@@ -1,16 +1,25 @@
 {% extends "layout.html" %}
 {% block body %}
 {{sentence}}
-
-Generate another.
+<p></p>
 <div class="ui twitter button">
-        <button class="twitter icon" type="submit" data-size="large" >
-    <a href="http://twitter.com/intent/tweet?text={{sentence}}">
+    <a href="http://twitter.com/intent/tweet?button_hashtag={{cleanhashtag}}&text={{sentence}}">
         <style>
             a { text-decoration:none; color:white; } </style>
-        </button>
         Tweet It
 </a>
 </div>
+<p></p>
+ <form action="/hashtag" method=post>
+           <div class="ui input">
+                         <input type=text name=hashtag placeholder="#hashtag" autocomplete="off">
+                               </div>
+                                     <button class="massive ui twitter button">
+                                         Generate Another.
+                                                           </button>
+
+                                                             </form>
+
 {% endblock %}
+
 
