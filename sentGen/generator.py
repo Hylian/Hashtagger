@@ -4,18 +4,25 @@ from string import ascii_lowercase
 import numpy
 import pickle
 
-NUM_FILES = 5
-MAX_LINES_SHAKESPEARE = 10000
+NUM_FILES = 130
+MAX_LINES_SHAKESPEARE = 100000
 
 hdict = dict ()
 count = dict ()
+freq = dict ()
 words = []
+
+
+def checkChar (c):
+    return 0 <= ord (c) and ord(c) < 128
 
 def clean (word):
     ret = ""
-    for c in word:
-	if c in ascii_lowercase:
-	    ret = ret + c
+    #for c in word:
+	#if ('0' <= c and c <= '9') or ('a' <= c and c <= 'z'):
+	    #ret = ret + c
+    ret = filter (checkChar, word)
+    ret = ret.encode ("ascii", "ignore")
     return ret
 
 def is_url (word):
@@ -50,20 +57,6 @@ def read_shakespeare ():
     words.append ("END")
     return words
 
-
-def process (words):
-    global count
-    for i in range (len (words) - 1):
-	if words [i] not in count:
-	    count [words [i]] = dict ()
-
-	if words [i + 1] in count[words [i]]:
-	    count [words[i]][words[i + 1]] += 1.0
-	else:
-	    count [words[i]][words[i + 1]] = 1.0
-
-
-
 def read_in (file_addr):
     data = pickle.load (open (file_addr, 'rb'))
     words = []
@@ -75,13 +68,15 @@ def read_in (file_addr):
 	words.append ("START")
 
 	for hashtag in hashtags:
+	    hashtag = clean (hashtag)
+	    #hashtag = hashtag.decode("utf8","ignore").encode ("ascii", "ignore")
 	    if hashtag not in hdict:
 		hdict [hashtag] = dict ()
 	    for word in text:
 		if is_url (word):
 		    continue
 	    
-		words.append (word)
+		words.append (clean (word))
 		
 		#print hashtag, word
 		if word in hdict [hashtag]:
@@ -92,6 +87,19 @@ def read_in (file_addr):
 	words.append ("END")
     return words
 
+def process (words):
+    global count
+    for i in range (len (words) - 1):
+	if words [i] not in count:
+	    count [words [i]] = dict ()
+	    freq [words [i]] = 1
+	else:
+	    freq [words [i]] += 1
+
+	if words [i + 1] in count[words [i]]:
+	    count [words[i]][words[i + 1]] += 1.0
+	else:
+	    count [words[i]][words[i + 1]] = 1.0
 
 def print_dict (d):
     for word in d:
@@ -115,13 +123,9 @@ def merge (cur_word, hashtag):
     for word in a:
 	ret [word] = a [word]
 	if word in b:
-	    ret [word] *= b [word]
+	    ret [word] *= b [word] / freq [word]
 	else:
-	    ret [word] *= .01
-    #for word in b:
-	#if word in ret:
-	    #continue
-	#ret [word] = 0 * b [word]
+	    ret [word] *= .01 / freq [word]
 
     return ret
 
@@ -150,15 +154,15 @@ def get_sentence (word, hashtag):
     ret = ""
 
     while (cur_word != "END"):
-	if (len (ret) + len (cur_word) + 1 > 140): #hashtags don't count to length?
+	if (len (ret) + len (cur_word) + 1 + len (hashtag) > 140):
 	    break
 	ret = ret + " " + cur_word
+	#ret = ret + cur_word
 
 	prob = normalize (merge (cur_word, hashtag))
-	#prob = normalize (count [cur_word])
 
 	#end early
-	if (len (ret) > 120):
+	if (len (ret) > 100):
 	    if "END" in prob:
 		break
 	
@@ -169,6 +173,8 @@ def get_sentence (word, hashtag):
 def get_all_data ():
     global words, count, hdict
     words = []
+    count = dict ()
+    hdict = dict ()
 
     for i in range (NUM_FILES):
 	read_in ('../scraper/tweets' + str (i))
@@ -188,7 +194,6 @@ def get_all_data ():
     print len (hdict)
     print len (count)
 
-
 def load_data ():
     global count
     global hdict
@@ -199,14 +204,26 @@ def load_data ():
 
 def generate (cur_hash):
     global hdict
-    print len (hdict)
 
     if (cur_hash not in hdict):
-	return cur_hash + " is not a valid hashtag"
+	return cur_hash + " is not a recognized hashtag"
 
     cur_word = sample (normalize (hdict [cur_hash]))
 
     result = get_sentence (cur_word, cur_hash) + " " + cur_hash
+    #print result
+    #print ""
+    return result
+
+def generate_multiple (cur_hash, num):
+    result = []
+    if (num <= 0):
+	return "That is not a valid number"
+
+    for i in range (num):
+	result.append (generate (cur_hash))
+
     return result
 
 load_data ()
+#how to deal with nonunicode characters?
