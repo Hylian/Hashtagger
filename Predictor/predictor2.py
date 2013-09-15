@@ -1,4 +1,5 @@
 import numpy
+from math import log
 from predictor_helper import get_example, run_tests 
 
 num_train = 0
@@ -61,8 +62,9 @@ def normalize (d):
     weighted_sum = 0
     for word in d:
 	weighted_sum += d [word]
+    average = weighted_sum / len (d)
     for word in d:
-	d [word] = float (d [word]) / float (weighted_sum)
+	d [word] -= average
 
     return d
 
@@ -81,22 +83,11 @@ def predictor_func (example):
 		     hashtag_word_pairs = float (word_hash_freq [hashtag][word])
 
 		p_word_given_hashtag = hashtag_word_pairs / hcount [hashtag]
-		p_word_given_not_hashtag = (float (freq [word]) - hashtag_word_pairs)/ (num_words - len (example))
+		#p_word_given_not_hashtag = (float (freq [word]) - hashtag_word_pairs)/ (num_words - len (example))
 
-		#print p_word_given_hashtag, p_word_given_not_hashtag
-		p = ret[hashtag]
-		pgood = p * p_word_given_hashtag
-		pbad = (1 - p) * p_word_given_not_hashtag
+		ret [hashtag] += log (p_word_given_hashtag) - log (float (freq [word]) / num_words)
+		#assert (ret [hashtag] <= 1)
 
-		#print p, p_word_given_not_hashtag, pgood, pbad
-		assert (pbad >= 0 and pgood >= 0)
-
-		ret [hashtag] = log (pgood) - log (float (freq [word]) / num_words)
-		assert (ret [hashtag] <= 1)
-
-    #for i in ret:
-#	if ret[i] > 1:
-#	    print i,ret[i]
     for hashtag in ret:
 	if ret[hashtag] == 1:
 	    ret[hashtag] = 1-1e-7

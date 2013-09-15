@@ -4,7 +4,7 @@ import pickle
 import numpy
 
 NUM_FILES = 130
-MAX_LINES_SHAKESPEARE = 10000
+MAX_LINES_SHAKESPEARE = 0
 
 hdict = dict ()
 count = dict ()

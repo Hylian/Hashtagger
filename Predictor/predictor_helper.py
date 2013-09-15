@@ -1,14 +1,14 @@
 import numpy, pickle
-from predictor import predictor_func
+from math import log 
 
-NUM_FILES = 100
+NUM_FILES = 20
 freq = dict ()
 words = []
 examples = []
 
 cur_example = 0
-num_train = 1000
-num_test = 1000
+num_train = 10000
+num_test = 10
 score = 0.0
 
 #utilities
@@ -59,6 +59,8 @@ def get_all_data ():
     #read_in ('../csvconvert/economytweets.csv.pickle')
 
 def get_example ():
+    global examples, cur_example, num_train
+
     if (cur_example >= num_train):
 	return False
 
@@ -66,20 +68,49 @@ def get_example ():
     cur_example += 1
     return ex
 
-def run_tests ():
-    ex = examples [cur_example]
-    distrib = predictor_func (ex [0])
-    cur_score = 0
+def test (example, predictor_func):
+    global cur_example
+
+    distrib = predictor_func (example)
+    
+    top_hashtags = []
+    for key,value in distrib.iteritems ():
+	top_hashtags.append ((value, key))
+    top_hashtags = sorted (top_hashtags)
+    top_hashtags.reverse ()
+
+    print ' '.join (example)
+    for hashtag in top_hashtags [:10]:
+	print hashtag [0], hashtag[1]
+    cur_example += 1
+
+    return (top_hashtags [:10], top_hashtags [-10:])
+
+    """
+    cur_score = 0.0
     for hashtag in distrib:
 	if hashtag not in ex [1]:
-	    cur_score += log (1 - distrib [hashtag])
+	    cur_score += 1 - distrib [hashtag]
     for hashtag in ex [1]:
 	if hashtag in distrib:
-	    cur_score += log (distrib [hashtag])
+	    cur_score += distrib [hashtag]
 	else:
-	    cur_score += -1000
+	    cur_score += -1000.0
 
     score += cur_score
-    cur_example += 1
+    print cur_example, cur_score
+    """
+
+def run_tests (predictor_func):
+    global examples, cur_example, score
+
+    while (cur_example < num_train + num_test):
+	ex = examples [cur_example]
+	test (ex [0], predictor_func)
+	print ex [1]
+	#if (cur_example % 100 == 0):
+	    #print "Average score so far (" + str(cur_example) + " examples):",
+	    #print score / cur_example 
+
 
 get_all_data ()
