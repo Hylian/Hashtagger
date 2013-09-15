@@ -59,6 +59,9 @@ def get_all_data ():
     #read_in ('../csvconvert/economytweets.csv.pickle')
 
 def get_example ():
+    if (cur_example >= num_train):
+	return False
+
     ex = examples [cur_example]
     cur_example += 1
     return ex
