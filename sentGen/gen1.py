@@ -29,9 +29,9 @@ count = dict ()
 
 for i in range (len (words) - 1):
     if words [i] in count:
-	count [words [i]].append ((words [i + 1], 1))
+	count [words [i]].append (words [i + 1])
     else:
-	count [words [i]] = [(words[i + 1], 1)]
+	count [words [i]] = [words[i + 1]]
 
 
 def normalize (word):

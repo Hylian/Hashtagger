@@ -4,10 +4,12 @@ from string import ascii_lowercase
 import numpy
 import pickle
 
-NUM_FILES = 50
+NUM_FILES = 5
+MAX_LINES_SHAKESPEARE = 100000
 
 wordfile = open ('../data/shakespeare.txt', 'r')
-words = []
+count = dict ()
+hdict = dict ()
 
 def clean (word):
     ret = ""
@@ -22,8 +24,15 @@ def is_url (word):
     return False
 
 def read_shakespeare ():
+    numlines = 0
+
     words = ["START"]
     for line in wordfile:
+	if (numlines > MAX_LINES_SHAKESPEARE):
+	    if (words [len (words) - 1] == "START"):
+		break
+	numlines += 1
+
 	cur_words = line.split ()
 	#if len (cur_words) == 0:
 
@@ -37,11 +46,10 @@ def read_shakespeare ():
 		words.append (word_clean)
     words.append ("END")
 
-count = dict ()
-hdict = dict ()
 
 def process (words):
     for i in range (len (words) - 1):
+	words [i]
 	if words [i] not in count:
 	    count [words [i]] = dict ()
 
@@ -51,9 +59,10 @@ def process (words):
 	    count [words[i]][words[i + 1]] = 1.0
 
 
-for i in range (NUM_FILES):
-    data = pickle.load (open ('../scraper/tweets' + str (i), 'rb'))
-    
+words = []
+
+def read_in (file_addr):
+    data = pickle.load (open (file_addr, 'rb'))
     for pair in data:
 	text = pair [0]
 	hashtags = pair [1]
@@ -68,16 +77,13 @@ for i in range (NUM_FILES):
 	    
 		words.append (word)
 		
-		print hashtag, word
+		#print hashtag, word
 		if word in hdict [hashtag]:
 		    hdict[hashtag][word] += 1.0
 		else:
 		    hdict[hashtag][word] = 1.0 
 	
 	words.append ("END")
-
-process (words)
-print "Dictionary has been processed for shakespeare"
 
 
 def print_dict (d):
@@ -101,11 +107,11 @@ def merge (cur_word, hashtag):
 	if word in b:
 	    ret [word] *= b [word]
 	else:
-	    ret [word] *= .1
-    for word in b:
-	if word in ret:
-	    continue
-	ret [word] = b [word]
+	    ret [word] *= .01
+    #for word in b:
+	#if word in ret:
+	    #continue
+	#ret [word] = 0 * b [word]
 
     return ret
 
@@ -122,41 +128,56 @@ def normalize (d):
 
     return d
 
+def sample (prob):
+    p = numpy.random.uniform ()
+
+    for word in prob:
+	p -= prob [word]
+	if p <= 1e-9:
+	    return word
+
 def get_sentence (word, hashtag):
     cur_word = word
     ret = ""
 
     while (cur_word != "END"):
+	if (len (ret) + len (cur_word) + 1 > 140): #hashtags don't count to length?
+	    break
 	ret = ret + " " + cur_word
+	
+
 	prob = normalize (merge (cur_word, hashtag))
 	#prob = normalize (count [cur_word])
-	p = numpy.random.uniform ()
-	print_dict (prob)
 
-	next_word = ""
-	for word in prob:
-	    p -= prob [word]
-	    if p <= 1e-9:
-		next_word = word
+	#end early
+	if (len (ret) > 120):
+	    if "END" in prob:
 		break
+	
+	cur_word = sample (prob)
 
-	cur_word = next_word
+    return ret
+ 
 
-    return ret 
+for i in range (NUM_FILES):
+    read_in ('../scraper/tweets' + str (i))
 
-while (True):
-    cur_word = raw_input ("Choose a Starting Word: ")
-    cur_word = cur_word.lower ()
-    cur_hash = raw_input ("Choose a Hashtag: ")
+read_shakespeare ()
+read_in ('../csvconvert/yolotweets.csv.pickle')
+#read_in ('../csvconvert/iphonetweets.csv.pickle')
+#read_in ('../csvconvert/educationtweets.csv.pickle')
+read_in ('../csvconvert/newstweets.csv.pickle')
+read_in ('../csvconvert/syriatweets.csv.pickle')
+read_in ('../csvconvert/economytweets.csv.pickle')
 
-    if (cur_word not in count):
-	print "Not a valid word"
-	continue
+process (words)
 
+def generate (cur_hash):
     if (cur_hash not in hdict):
-	print "Not a valid hashtag"
-	continue
+	return cur_hash + " is not a valid hashtag"
 
-    print_dict (hdict [cur_hash])
-    sent = get_sentence (cur_word, cur_hash)
-    print sent
+    #print_dict (hdict [cur_hash])
+    cur_word = sample (normalize (hdict [cur_hash]))
+
+    result = get_sentence (cur_word, cur_hash) + " " + cur_hash
+    return result
