@@ -1,4 +1,5 @@
 import numpy, pickle, math
+from random import choice
 
 NUM_FILES = 100
 freq = dict ()
@@ -84,34 +85,16 @@ def test (example, predictor_func):
     top_hashtags = sorted (top_hashtags)
     top_hashtags.reverse ()
 
-#    print ' '.join (example)
-#    for hashtag in top_hashtags [:10]:
-#	print hashtag [0], hashtag[1]
-    
     cur_example += 1
 
     return (top_hashtags [:10], top_hashtags [-10:])
-
-    """
-    cur_score = 0.0
-    for hashtag in distrib:
-	if hashtag not in ex [1]:
-	    cur_score += 1 - distrib [hashtag]
-    for hashtag in ex [1]:
-	if hashtag in distrib:
-	    cur_score += distrib [hashtag]
-	else:
-	    cur_score += -1000.0
-
-    score += cur_score
-    print cur_example, cur_score
-    """
 
 def run_tests (predictor_func):
     global examples, cur_example, score
 
     while (cur_example < num_train + num_test):
-	ex = examples [cur_example]
+	#ex = examples [cur_example]
+	ex = choice (examples)
 	test (ex [0], predictor_func)
 	print ' '.join (ex[0]), ex [1]
 	#if (cur_example % 100 == 0):
