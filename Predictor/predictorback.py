@@ -24,6 +24,7 @@ def add_word (word):
 def add_train (text, hashtag):
     if len (text) == 0:
 	return
+	#text.append ("AAAAAAAAAAAAAAAAA")
 
     if hashtag not in hprior:
 	hprior [hashtag] = 0
@@ -66,6 +67,7 @@ def set_priors ():
     for hashtag in hprior:
 	#print hashtag, h_avg_len [hashtag], hprior [hashtag]
 	h_avg_len [hashtag] = float (h_avg_len [hashtag]) / hprior [hashtag]
+	assert (h_avg_len != 659.0)
 	hprior [hashtag] = math.log (float (hprior[hashtag]) / num_train)
 
 def normalize (d):
@@ -78,23 +80,10 @@ def normalize (d):
 
     return d
 
-def get_text (result):
-    ret = ""
-    best = result [0]
-    worst = result [1]
-    ret += "MOST RELEVANT HASHTAGS"
-    for x in best:
-	ret += str (x [0]) + " " + str (x [1])
-    ret += "\nLEAST RELEVANT HASHTAGS"
-    for x in reversed (worst):
-	ret += str (x [0]) + " " + str (x [1])
-
-
 def predictor_func (example):
     for unigram in example:
 	if (unigram not in hprior):
-	    unigram = clean (unigram).lower ()
-	    add_train (example, unigram)
+	    add_train (example, clean (unigram).lower ())
 	    assert (unigram in hprior)
 
     ret = dict (hprior)
@@ -116,23 +105,17 @@ def predictor_func (example):
 		if unigram in uni_hash_freq[hashtag]:
 		     p_word_given_hashtag = float (uni_hash_freq [hashtag][unigram]) / hcount [hashtag]
 
-
 		#p_word_given_not_hashtag = (float (freq [word]) - hashtag_word_pairs)/ (num_words - len (example))
 
 		ret [hashtag] += math.log (p_word_given_hashtag) #- math.log (float (uni_freq [unigram]) / num_words)
 
 		len_dif = abs (tlen - h_avg_len [hashtag])
 
-		#if unigram in uni_hash_freq[hashtag]:
-		    #print p_word_given_hashtag, uni_freq[unigram], num_words
-		    #print unigram, hashtag, tlen, h_avg_len [hashtag], len_dif
+		if unigram in uni_hash_freq[hashtag]:
+		    print p_word_given_hashtag, uni_freq[unigram], num_words
+		    print unigram, hashtag, tlen, h_avg_len [hashtag], len_dif
 		ret [hashtag] -= .01 * math.log (1 + len_dif)
 		
-    return normalize (ret)
+    print ret ["harvard"]
 
-print "Begin Training"
-train ()
-print "Training Complete"
-print "Setting Priors"
-set_priors ()
-print "Priors Set"
+    return normalize (ret)

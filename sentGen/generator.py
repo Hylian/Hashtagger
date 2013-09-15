@@ -28,6 +28,8 @@ def is_url (word):
 def read_shakespeare ():
     numlines = 0
     wordfile = open ('data/shakespeare.txt', 'r')
+    if (MAX_LINES_SHAKESPEARE == 0):
+	return []
 
     global words
 
