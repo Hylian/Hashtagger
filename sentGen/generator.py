@@ -27,7 +27,7 @@ def is_url (word):
 
 def read_shakespeare ():
     numlines = 0
-    wordfile = open ('../data/shakespeare.txt', 'r')
+    wordfile = open ('data/shakespeare.txt', 'r')
 
     global words
 
@@ -171,28 +171,28 @@ def get_all_data ():
     hdict = dict ()
 
     for i in range (NUM_FILES):
-	read_in ('../scraper/tweets' + str (i))
+	read_in ('scraper/tweets' + str (i))
 
     words += read_shakespeare ()
-    words += read_in ('../csvconvert/yolotweets.csv.pickle')
-    #words += read_in ('../csvconvert/iphonetweets.csv.pickle')
-    #words += read_in ('../csvconvert/educationtweets.csv.pickle')
-    words += read_in ('../csvconvert/newstweets.csv.pickle')
-    words += read_in ('../csvconvert/syriatweets.csv.pickle')
-    #words += read_in ('../csvconvert/economytweets.csv.pickle')
+    words += read_in ('csvconvert/yolotweets.csv.pickle')
+    #words += read_in ('/csvconvert/iphonetweets.csv.pickle')
+    #words += read_in ('/csvconvert/educationtweets.csv.pickle')
+    words += read_in ('csvconvert/newstweets.csv.pickle')
+    words += read_in ('csvconvert/syriatweets.csv.pickle')
+    #words += read_in ('/csvconvert/economytweets.csv.pickle')
 
     process (words)
 
-    pickle.dump (hdict, open ('/sentGen/hdict.pickle', 'wb'))
-    pickle.dump (count, open ('/sentGen/count.pickle', 'wb'))
+    pickle.dump (hdict, open ('sentGen/hdict.pickle', 'wb'))
+    pickle.dump (count, open ('sentGen/count.pickle', 'wb'))
     print len (hdict)
     print len (count)
 
 def load_data ():
     global count
     global hdict
-    count = pickle.load (open ('/sentGen/count.pickle', 'rb'))	
-    hdict = pickle.load (open ('/sentGen/hdict.pickle', 'rb'))
+    count = pickle.load (open ('sentGen/count.pickle', 'rb'))	
+    hdict = pickle.load (open ('sentGen/hdict.pickle', 'rb'))
     print len (hdict)
     print len (count)
 
