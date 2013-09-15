@@ -4,7 +4,7 @@ import pickle
 import numpy
 
 NUM_FILES = 130
-MAX_LINES_SHAKESPEARE = 100000
+MAX_LINES_SHAKESPEARE = 10000
 
 hdict = dict ()
 count = dict ()
@@ -156,13 +156,13 @@ def get_sentence (word, hashtag):
 	prob = normalize (merge (cur_word, hashtag))
 
 	#end early
-	if (len (ret) > 20):
+	if (len (ret) > 50):
 	    if "END" in prob:
 		break
 	
 	cur_word = sample (prob)
 
-    return ret
+    return ret [1:]
 
 def get_all_data ():
     global words, count, hdict
@@ -220,4 +220,5 @@ def generate_multiple (cur_hash, num):
     return result
 
 load_data ()
+print "Data finished loading"
 #how to deal with nonunicode characters?
