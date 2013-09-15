@@ -1,4 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
 {{sentence}}
+
+Generate another.
+<div class="ui twitter button">
+        <button class="twitter icon" type="submit" data-size="large" >
+    <a href="http://twitter.com/intent/tweet?text={{sentence}}">
+        <style>
+            a { text-decoration:none; color:white; } </style>
+        </button>
+        Tweet It
+</a>
+</div>
 {% endblock %}
+

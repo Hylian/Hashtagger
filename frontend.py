@@ -1,4 +1,7 @@
 from flask import Flask, url_for, redirect, request, render_template
+import sys
+sys.path.insert(0, 'sentGen')
+from generator import get_all_data
 app = Flask(__name__)
 
 @app.route('/')
@@ -9,7 +12,7 @@ def main_page():
 def hashtag():
     if request.method=='POST':
         hashtag = request.form['hashtag']
-        return render_template('hashtag.html', sentence='the hashtag is ' + hashtag)
+        return render_template('hashtag.html', sentence= hashtag)
     else:
         return 'You messed up'
 
