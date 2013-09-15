@@ -1,8 +1,7 @@
 from math import log
-from random import choice
-from string import ascii_lowercase
-import numpy
+import random
 import pickle
+import numpy
 
 NUM_FILES = 130
 MAX_LINES_SHAKESPEARE = 100000
@@ -14,13 +13,9 @@ words = []
 
 
 def checkChar (c):
-    return 0 <= ord (c) and ord(c) < 128
+    return (0 <= ord (c) and ord(c) < 128) and (('0'<=c and c<='9') or ('a' <= c and c <='z') or c == '#')
 
 def clean (word):
-    ret = ""
-    #for c in word:
-	#if ('0' <= c and c <= '9') or ('a' <= c and c <= 'z'):
-	    #ret = ret + c
     ret = filter (checkChar, word)
     ret = ret.encode ("ascii", "ignore")
     return ret
@@ -69,7 +64,6 @@ def read_in (file_addr):
 
 	for hashtag in hashtags:
 	    hashtag = clean (hashtag)
-	    #hashtag = hashtag.decode("utf8","ignore").encode ("ascii", "ignore")
 	    if hashtag not in hdict:
 		hdict [hashtag] = dict ()
 	    for word in text:
@@ -140,7 +134,7 @@ def normalize (d):
     return d
 
 def sample (prob):
-    p = numpy.random.uniform ()
+    p = random.uniform (0,1)
 
     for word in prob:
 	p -= prob [word]
@@ -162,7 +156,7 @@ def get_sentence (word, hashtag):
 	prob = normalize (merge (cur_word, hashtag))
 
 	#end early
-	if (len (ret) > 100):
+	if (len (ret) > 20):
 	    if "END" in prob:
 		break
 	
@@ -185,20 +179,20 @@ def get_all_data ():
     #words += read_in ('../csvconvert/educationtweets.csv.pickle')
     words += read_in ('../csvconvert/newstweets.csv.pickle')
     words += read_in ('../csvconvert/syriatweets.csv.pickle')
-    words += read_in ('../csvconvert/economytweets.csv.pickle')
+    #words += read_in ('../csvconvert/economytweets.csv.pickle')
 
     process (words)
 
-    pickle.dump (hdict, open ('hdict.pickle', 'wb'))
-    pickle.dump (count, open ('count.pickle', 'wb'))
+    pickle.dump (hdict, open ('/sentGen/hdict.pickle', 'wb'))
+    pickle.dump (count, open ('/sentGen/count.pickle', 'wb'))
     print len (hdict)
     print len (count)
 
 def load_data ():
     global count
     global hdict
-    count = pickle.load (open ('count.pickle', 'rb'))	
-    hdict = pickle.load (open ('hdict.pickle', 'rb'))
+    count = pickle.load (open ('/sentGen/count.pickle', 'rb'))	
+    hdict = pickle.load (open ('/sentGen/hdict.pickle', 'rb'))
     print len (hdict)
     print len (count)
 
