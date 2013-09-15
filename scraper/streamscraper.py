@@ -15,7 +15,7 @@ auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
 class CustomStreamListener(tweepy.StreamListener):
-    filecounter = 30
+    filecounter = 130
     tweetlist = []
     def on_status(self, status):
             tweet= status.text
